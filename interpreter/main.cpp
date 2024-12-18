@@ -31,6 +31,8 @@ string readFile() {
 		
 		output = output + "\n" + fileContents;
 	}
+
+	inputFile.close();
 	return output;
 }
 
