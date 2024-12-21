@@ -12,19 +12,23 @@ string readFile();
 
 int main() {
 
-		string output = readFile();
-		cout << output  << endl;
+		string query = readFile();
+		cout << query  << endl;
 		return 0;
 }
 
 string readFile() {
 	string output;
+	
+	#if defined (__WIN64__) 
+		inputFile.open("C:\\mariadb\\*");
 
-	cout << "Enter path to input file:" << endl;
-	getline(cin, inputFilePath);
-	inputFile.open(inputFilePath);
+	#elif defined (__linux__) 
+		inputFile.open("/home/thesilverghost/test/test.mdb");
+	#endif
+
 	if (!inputFile) {
-		cout << "File path error." << endl;
+	cout << "" << endl;
 	}
 
 	while (getline (inputFile,fileContents)) {
@@ -35,4 +39,3 @@ string readFile() {
 	inputFile.close();
 	return output;
 }
-
