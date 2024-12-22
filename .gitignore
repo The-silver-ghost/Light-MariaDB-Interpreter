@@ -3,3 +3,4 @@
 *.out
 main
 interpreter/run
+.main.cpp.swp
