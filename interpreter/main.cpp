@@ -1,41 +1,66 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cstdlib> //for os commands
+#include <filesystem>
+#include <vector>
+
 using namespace std;
+using namespace std::filesystem;
 
 ifstream inputFile; //mdb
 ofstream outputFile; // txt
 string inputFilePath,fileContents;
 
-string readFile();
+vector<string> readFile();
 
 int main() {
 
-		string query = readFile();
-		cout << query  << endl;
+		vector<string> query = readFile();
+		
+		for (string commands : query) {
+			cout << commands << endl;
+		}
 		return 0;
 }
 
-string readFile() {
-	string output;
+vector<string> readFile() {
 	
-	#if defined (__WIN64__) 
-		inputFile.open("C:\\mariadb\\*");
+	string fileName;
+	vector<string> output;
 
-	#elif defined (__linux__) 
-		inputFile.open("/home/thesilverghost/test/test.mdb");
+
+	#if defined (__WIN64__)
+		inputFilePath = "C:\\mariadb\\";
+	#elif defined (__linux__)
+		inputFilePath = "/home/thesilverghost/test/";
 	#endif
-
-	if (!inputFile) {
-	cout << "" << endl;
-	}
-
-	while (getline (inputFile,fileContents)) {
+	//object from preprocessor
+	recursive_directory_iterator end_itr;
+	for (const auto& entry: recursive_directory_iterator(inputFilePath)) {
+	
+		if (is_regular_file(entry.path())) {
 		
-		output = output + "\n" + fileContents;
+			fileName = entry.path().filename();
+			string newInputFilePath = inputFilePath + fileName;
+			inputFile.open(newInputFilePath);
+
+			while (getline(inputFile,fileContents)) {
+				
+				output.push_back(fileContents);
+			}
+			newInputFilePath = inputFilePath;
+			inputFile.close();
+		}
+
+
+
+		else {
+		
+			cout << "No files detected in directory." << endl;
+		
+		}
+
 	}
 
-	inputFile.close();
 	return output;
 }
