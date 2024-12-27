@@ -10,7 +10,7 @@
 // Member_4: 243UC246VV | SUHEN KAILASH | suhen.kailash@student.mmu.edu.my | 60 11-1124 0726
 // *********************************************************
 // Task Distribution
-// Member_1:read file, database,update 
+// Member_1:read file, database,update
 // Member_2:create, select
 // Member_3:table,insert into
 // Member_4:select count,delete
@@ -18,72 +18,43 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <filesystem>
 #include <vector>
-
 using namespace std;
-using namespace std::filesystem;
 
-ifstream inputFile; //mdb
-ofstream outputFile; // txt
-string inputFilePath,fileContents;
+ifstream inputFile;
+string filePath = "C:\\mariadb\\";
+
 
 vector<string> readFile();
 
 int main() {
-
-		vector<string> query = readFile();
-		
-		for (string commands : query) {
-			cout << commands << endl;
-		}
-		return 0;
+    vector<string> query = readFile();
+    for (string commands:query) {
+        cout << commands << endl;
+    }
+    return 0;
 }
 
-vector<string> readFile() {
-	
-	string fileName;
-	vector<string> output;
+vector <string> readFile() {
+    vector<string> output;
+    string fileName,fileContents;
 
+    cout << "Filename? (Case-sensitive,include extension)" << endl;
+    cout << ">";
+    cin >> fileName;
 
-	#if defined (__WIN64__)
-		inputFilePath = "C:\\mariadb\\";
-	#elif defined (__linux__)
-		inputFilePath = "/home/thesilverghost/test/";
-	#endif
-	//object from preprocessor
-	recursive_directory_iterator end_itr;
-	for (const auto entry: recursive_directory_iterator(inputFilePath)) {
-	
-		if (is_regular_file(entry.path())) {
+    string fullFilePath = filePath+fileName;
+    inputFile.open(fullFilePath);
 
-			if (entry.path().extension() == ".mdb"){
-		
-				fileName = entry.path().filename();
-				string newInputFilePath = inputFilePath + fileName;
-				inputFile.open(newInputFilePath);
-
-				while (getline(inputFile,fileContents)) {
-				
-					output.push_back(fileContents);
-				}
-				newInputFilePath = inputFilePath;
-				inputFile.close();
-			}
-			else {
-				cout << "Invalid input file. Perhaps the extension is wrong?" << endl;
-			}
-		}
-
-
-
-		else {
-		
-			cout << "Object that isn't file detected in directory.\nPlease only keep files in directory" << endl;
-		
-		}
-
-	}
-
-	return output;
+    if (!inputFile) {
+        cout << "File not found in target directory" << endl;
+    }
+    else {
+        while (getline(inputFile,fileContents)) {
+            output.push_back(fileContents);
+        }
+        fullFilePath = filePath;
+        inputFile.close();
+    }
+    return output;
 }
