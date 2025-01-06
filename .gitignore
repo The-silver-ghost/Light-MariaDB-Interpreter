@@ -1,6 +1,9 @@
 .vscode/
 *.exe
 *.out
+*.o
+*.txt
+*.mdb
 main
 interpreter/run
 .main.cpp.swp
