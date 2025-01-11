@@ -35,9 +35,9 @@ struct rowType
     string customer_Email;
 };
 
-string OutPutFileToUse(vector<string>& query);
-void commandCreateOutPutFile(vector<string>& query, ofstream& outfile);
-void commandCreateTable(vector<string>& query, ofstream& outfile,string& tableName);
+string OutPutFileToUse(string& query);
+void commandCreateOutPutFile(string& query, ofstream& outfile);
+void commandCreateTable(string& query, ofstream& outfile,string& tableName);
 void commandInsertToTable (vector<string>& query, ofstream& outfile,string& headers, int& totalInserts);
 void commandSelect (vector<string>& query, ofstream& outfile);
 string tableHeaders(string tableName);
@@ -48,66 +48,55 @@ vector<vector<rowType>> customerTable;
 
 int main() {
 
-string tableName;
-string headers;
-int totalInserts = 0;
+    string tableName;
+    string headers;
+    int totalInserts = 0;
+    ofstream outfile;
+
 
 
     vector<string> query = readFile();
     for (string commands : query){
-//create,delete,database,select,select count,update,table,create table,insert into
-        cout << commands << endl;
-        if (commands.find("CREATE TABLE") != string::npos){
-            cout << "CREATE TABLE" << endl;
+        if (commands.find("-1") != string::npos){
+            //cout << "found -1" << endl;
+            outfile.close();
+        }
+        else if (commands.find("CREATE TABLE") != string::npos){
+            headers = tableHeaders(tableName);
+            commandCreateTable(commands, outfile,tableName);
         }
         else if (commands.find("DELETE")!=string::npos) {
-            cout << "delete" << endl;
+            //cout << "delete" << endl;
         }
         else if (commands.find("DATABASE")!= string::npos) {
-            cout << "DATABASE" << endl;
+            //cout << "DATABASE" << endl;
         }
         else if (commands.find("SELECT")!= string::npos) {
-            cout << "SELECT" << endl;
+            commandSelect(query, outfile);
         }
         else if (commands.find("SELECT COUNT")!= string::npos) {
-            cout << "SELECT COUNT" << endl;
+            //cout << "SELECT COUNT" << endl;
         }
         else if (commands.find("UPDATE")!= string::npos) {
-            cout << "UPDATE" << endl;
+            //cout << "UPDATE" << endl;
         }
         else if (commands.find("TABLE")!= string::npos) {
-            cout << "TABLE" << endl;
+            tableDisplay(outfile);
         }
         else if (commands.find("CREATE")!= string::npos) {
-            cout << "CREATE" << endl;
+            string outPutName = OutPutFileToUse(commands);
+            outfile.open(outPutName, ios::app);
+            commandCreateOutPutFile(commands, outfile);
         }
         else if (commands.find("INSERT INTO")!= string::npos) {
-            cout << "INSERT INTO" << endl;
+            commandInsertToTable(query, outfile, headers, totalInserts);
         }
         else {
-            cout << "Invalid commands" << endl;
+           // cout << "Invalid commands" << endl;
         }
 
     }
-
-
-
-  /* string outPutName = OutPutFileToUse(query);
-   ofstream outfile;
-   outfile.open(outPutName, ios::app);
-    commandSelect(query, outfile);
-
-
-   commandCreateOutPutFile(query, outfile);
-    headers = tableHeaders(tableName);
-    commandCreateTable(query, outfile,tableName);
-
-    commandInsertToTable(query, outfile, headers, totalInserts);
-    tableDisplay(outfile);
-
-
-   outfile.close();*/
-
+    return 0;
 }
 
 vector <string> readFile() {
@@ -129,90 +118,62 @@ vector <string> readFile() {
             fullFilePath = filePath;
             inputFile.close();
         }
+        output.push_back("-1");
     }
     return output;
 }
 
 
-string OutPutFileToUse(vector<string>& query)
+string OutPutFileToUse(string& query)
 {
-
-    for(int i = 0; i < query.size();i++)
- {
-     if (query[i].find ("CREATE fileOutput1.txt;")!= -1)
+     if (query.find ("CREATE fileOutput1.txt")!= string::npos)
      {
-
       return "fileOutput1.txt";
      }
-    else if (query[i].find ("CREATE fileOutput2.txt;")!= -1)
+    else if (query.find ("CREATE fileOutput2.txt")!= string::npos)
      {
       return "fileOutput2.txt";
-
      }
-    else if (query[i].find ("CREATE fileOutput3.txt;")!= -1)
+    else if (query.find ("CREATE fileOutput3.txt")!= string::npos)
      {
       return "fileOutput3.txt";
      }
 
- }
   return "";
 }
 
-void commandCreateOutPutFile(vector<string>& query, ofstream& outfile)
+void commandCreateOutPutFile(string& query, ofstream& outfile)
 {
-
-    for(int i = 0; i < query.size();i++)
- {
-     if (query[i].find ("CREATE fileOutput1.txt;")!= -1)
+     if (query.find ("CREATE fileOutput1.txt")!= string::npos)
      {
-      cout << query[i]<<endl;
-      outfile << query[i]<<endl;
+      cout << query<<endl;
+      outfile << query<<endl;
      }
-    else if (query[i].find ("CREATE fileOutput2.txt;")!= -1)
+    else if (query.find ("CREATE fileOutput2.txt")!= string::npos)
      {
-      cout << query[i]<<endl;
-      outfile << query[i]<<endl;
+      cout << query<<endl;
+      outfile << query<<endl;
 
      }
-    else if (query[i].find ("CREATE fileOutput3.txt;")!= -1)
+    else if (query.find ("CREATE fileOutput3.txt")!= string::npos)
      {
-      cout << query[i]<<endl;
-      outfile << query[i]<<endl;
+      cout << query<<endl;
+      outfile << query<<endl;
      }
-
- }
 
 }
 
 
-void commandCreateTable(vector<string>& query, ofstream& outfile,  string& tableName)
+void commandCreateTable(string& query, ofstream& outfile,  string& tableName)
 {
-
-    for(int i = 0; i < query.size();i++)
-   {
-        if (query[i].find ("CREATE TABLE")!= -1)
-    {
-        cout <<query[i]<<endl;
-        outfile<<query[i]<<endl;
-        tableName = query [i];
-        tableName.erase(0, 13);
-        tableName.erase(tableName.find('('), 1);
-
-
-
-        while (i < query.size() && query[i].find(");") ==-1)
+        if (query.find ("CREATE TABLE")!= string::npos)
         {
-            i++;
-            cout<<query[i]<<endl;
-            outfile<<query[i]<<endl;
-;
-
+            cout <<query<<endl;
+            outfile<<query<<endl;
+            tableName = query;
+            tableName.erase(0, 13);
+            tableName.erase(tableName.find('('), -1);
         }
-
-        break;
-    }
-
-   }
 }
 
 
@@ -234,7 +195,7 @@ totalInserts = 0;
 
     for(int i = 0; i < query.size();i++)
    {
-        if (query[i].find ("INSERT INTO")!= -1)
+        if (query[i].find ("INSERT INTO")!= string::npos)
     {       totalInserts++;
 
 
@@ -289,7 +250,7 @@ void commandSelect (vector<string>& query, ofstream& outfile)
 
     for(int i = 0; i < query.size();i++)
    {
-        if (query[i].find ("SELECT")!= -1)
+        if (query[i].find ("SELECT")!= string::npos)
     {
         cout<<query[i]<<endl;
         outfile<<query[i]<<endl;
