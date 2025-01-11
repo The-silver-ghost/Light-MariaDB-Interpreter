@@ -38,8 +38,8 @@ struct rowType
 string OutPutFileToUse(string& query);
 void commandCreateOutPutFile(string& query, ofstream& outfile);
 void commandCreateTable(string& query, ofstream& outfile,string& tableName);
-void commandInsertToTable (vector<string>& query, ofstream& outfile,string& headers, int& totalInserts);
-void commandSelect (vector<string>& query, ofstream& outfile);
+void commandInsertToTable (string& query, ofstream& outfile,string& headers, int& totalInserts);
+void commandSelect (string& query, ofstream& outfile);
 string tableHeaders(string tableName);
 void tableDisplay(ofstream& outfile);
 vector<string> readFile();
@@ -58,7 +58,8 @@ int main() {
     vector<string> query = readFile();
     for (string commands : query){
         if (commands.find("-1") != string::npos){
-            //cout << "found -1" << endl;
+            totalInserts = 0;
+            customerTable.clear();
             outfile.close();
         }
         else if (commands.find("CREATE TABLE") != string::npos){
@@ -66,22 +67,23 @@ int main() {
             commandCreateTable(commands, outfile,tableName);
         }
         else if (commands.find("DELETE")!=string::npos) {
-            //cout << "delete" << endl;
+            cout << "delete" << endl;
         }
         else if (commands.find("DATABASE")!= string::npos) {
-            //cout << "DATABASE" << endl;
-        }
-        else if (commands.find("SELECT")!= string::npos) {
-            commandSelect(query, outfile);
+            cout << "DATABASE" << endl;
         }
         else if (commands.find("SELECT COUNT")!= string::npos) {
-            //cout << "SELECT COUNT" << endl;
+            cout << "SELECT COUNT" << endl;
+        }
+        else if (commands.find("SELECT")!= string::npos) {
+            commandSelect(commands, outfile);
+            tableDisplay(outfile);
         }
         else if (commands.find("UPDATE")!= string::npos) {
-            //cout << "UPDATE" << endl;
+            cout << "UPDATE" << endl;
         }
-        else if (commands.find("TABLE")!= string::npos) {
-            tableDisplay(outfile);
+        else if (commands.find("TABLES")!= string::npos) {
+            cout << "TABLES"<< endl;
         }
         else if (commands.find("CREATE")!= string::npos) {
             string outPutName = OutPutFileToUse(commands);
@@ -89,10 +91,10 @@ int main() {
             commandCreateOutPutFile(commands, outfile);
         }
         else if (commands.find("INSERT INTO")!= string::npos) {
-            commandInsertToTable(query, outfile, headers, totalInserts);
+            commandInsertToTable(commands, outfile, headers, totalInserts);
         }
         else {
-           // cout << "Invalid commands" << endl;
+           cout << "Invalid commands" << endl;
         }
 
     }
@@ -189,17 +191,11 @@ return headers;
 }
 
 
-void commandInsertToTable (vector<string>& query, ofstream& outfile,string& headers, int& totalInserts)
+void commandInsertToTable (string& query, ofstream& outfile,string& headers, int& totalInserts)
 {
-totalInserts = 0;
-
-    for(int i = 0; i < query.size();i++)
-   {
-        if (query[i].find ("INSERT INTO")!= string::npos)
-    {       totalInserts++;
-
-
-
+        if (query.find ("INSERT INTO")!= string::npos)
+        {
+            totalInserts++;
             rowType row ;
 
             row.customer_ID = totalInserts;
@@ -210,7 +206,7 @@ totalInserts = 0;
             row.customer_Phone = "phone" + to_string (totalInserts) ;
             row.customer_Email = "email"+ to_string (totalInserts) ;
 
-        cout  <<query[i]<<endl
+            cout  <<query<<endl
               <<headers
               <<" VALUES ("
               <<row.customer_ID<< ",'"
@@ -221,7 +217,7 @@ totalInserts = 0;
               <<row.customer_Phone<<"','"
               <<row.customer_Email<<"');"<<endl;
 
-      outfile <<query[i]<<endl
+            outfile <<query<<endl
               <<headers
               <<" VALUES ("
               <<row.customer_ID<< ",'"
@@ -232,28 +228,21 @@ totalInserts = 0;
               <<row.customer_Phone<<"','"
               <<row.customer_Email<<"');"<<endl;
 
-
-
-           vector<rowType>values;
-           values.push_back(row);
-           customerTable.push_back(values);
-
-
+               vector<rowType>values;
+               values.push_back(row);
+               customerTable.push_back(values);
     }
-   }
-
-
 }
 
-void commandSelect (vector<string>& query, ofstream& outfile)
+void commandSelect (string& query, ofstream& outfile)
 {
 
-    for(int i = 0; i < query.size();i++)
+    //for(int i = 0; i < query.size();i++)
    {
-        if (query[i].find ("SELECT")!= string::npos)
+        if (query.find ("SELECT")!= string::npos)
     {
-        cout<<query[i]<<endl;
-        outfile<<query[i]<<endl;
+        cout<<query<<endl;
+        outfile<<query<<endl;
 
    }
 
