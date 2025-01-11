@@ -1,26 +1,8 @@
 // *********************************************************
-// Program: YOUR_FILENAME.cpp
+// Program: main.cpp
 // Course: CCP6114 Programming Fundamentals
-// Lecture Class: TC3L
-// Tutorial Class: TT5L
-// Trimester: 2430
-// Member_1: 243UC245LQ | Sanjeevan A/L Rames | SANJEEVAN.RAMES@student.mmu.edu.my | 0176874937
-// Member_2: 243UC241FF | Youssef M.A. Abdul Razek | youssef.m.a1@student.mmu.edu.my | 966 54 935 7758
-// Member_3: 243UC2400B | Ousama M.A. Abdul Razek | ousama.m.a2@student.mmu.edu.my | +966 50 703 1726
-// Member_4: 243UC246VV | SUHEN KAILASH | suhen.kailash@student.mmu.edu.my | 60 11-1124 0726
-// *********************************************************
-// Task Distribution
-// Member_1:read file, database,update
-// Member_2:create, select
-// Member_3:table,insert into
-// Member_4:select count,delete
-// *********************************************************
-
-// *********************************************************
-// Program: YOUR_FILENAME.cpp
-// Course: CCP6114 Programming Fundamentals
-// Lecture Class: TC3L
-// Tutorial Class: TT5L
+// Lecture Class: TC8L
+// Tutorial Class: T16L
 // Trimester: 2430
 // Member_1: 243UC245LQ | Sanjeevan A/L Rames | SANJEEVAN.RAMES@student.mmu.edu.my | 0176874937
 // Member_2: 243UC241FF | Youssef M.A. Abdul Razek | youssef.m.a1@student.mmu.edu.my | 966 54 935 7758
@@ -60,7 +42,6 @@ void commandInsertToTable (vector<string>& query, ofstream& outfile,string& head
 void commandSelect (vector<string>& query, ofstream& outfile);
 string tableHeaders(string tableName);
 void tableDisplay(ofstream& outfile);
-
 vector<string> readFile();
 vector<vector<rowType>> customerTable;
 
