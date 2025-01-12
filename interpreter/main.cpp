@@ -96,7 +96,6 @@ int main() {
         else {
            cout << "Invalid commands" << endl;
         }
-
     }
     return 0;
 }
@@ -125,46 +124,41 @@ vector <string> readFile() {
     return output;
 }
 
-
 string OutPutFileToUse(string& query)
 {
-     if (query.find ("CREATE fileOutput1.txt")!= string::npos)
-     {
-      return "fileOutput1.txt";
-     }
+    if (query.find ("CREATE fileOutput1.txt")!= string::npos)
+    {
+        return "fileOutput1.txt";
+    }
     else if (query.find ("CREATE fileOutput2.txt")!= string::npos)
-     {
-      return "fileOutput2.txt";
-     }
+    {
+        return "fileOutput2.txt";
+    }
     else if (query.find ("CREATE fileOutput3.txt")!= string::npos)
-     {
-      return "fileOutput3.txt";
-     }
-
-  return "";
+    {
+        return "fileOutput3.txt";
+    }
+    return "";
 }
 
 void commandCreateOutPutFile(string& query, ofstream& outfile)
 {
-     if (query.find ("CREATE fileOutput1.txt")!= string::npos)
-     {
-      cout << query<<endl;
-      outfile << query<<endl;
-     }
+    if (query.find ("CREATE fileOutput1.txt")!= string::npos)
+    {
+        cout << query<<endl;
+        outfile << query<<endl;
+    }
     else if (query.find ("CREATE fileOutput2.txt")!= string::npos)
-     {
-      cout << query<<endl;
-      outfile << query<<endl;
-
-     }
+    {
+        cout << query<<endl;
+        outfile << query<<endl;
+    }
     else if (query.find ("CREATE fileOutput3.txt")!= string::npos)
-     {
-      cout << query<<endl;
-      outfile << query<<endl;
-     }
-
+    {
+        cout << query<<endl;
+        outfile << query<<endl;
+    }
 }
-
 
 void commandCreateTable(string& query, ofstream& outfile,  string& tableName)
 {
@@ -178,18 +172,11 @@ void commandCreateTable(string& query, ofstream& outfile,  string& tableName)
         }
 }
 
-
-
 string tableHeaders(string tableName)
-
 {
- string headers = tableName + "(customer_id,customer_name,customer_city,customer_state,customer_country,customer_phone,customer_email)";
-
-
-return headers;
-
+    string headers = tableName + "(customer_id,customer_name,customer_city,customer_state,customer_country,customer_phone,customer_email)";
+    return headers;
 }
-
 
 void commandInsertToTable (string& query, ofstream& outfile,string& headers, int& totalInserts)
 {
@@ -206,83 +193,45 @@ void commandInsertToTable (string& query, ofstream& outfile,string& headers, int
             row.customer_Phone = "phone" + to_string (totalInserts) ;
             row.customer_Email = "email"+ to_string (totalInserts) ;
 
-            cout  <<query<<endl
-              <<headers
-              <<" VALUES ("
-              <<row.customer_ID<< ",'"
-              <<row.customer_Name<<"','"
-              <<row.customer_City<<"','"
-              <<row.customer_State<<"','"
-              <<row.customer_Country<<"','"
-              <<row.customer_Phone<<"','"
-              <<row.customer_Email<<"');"<<endl;
+            cout  <<query<<endl;
+            outfile <<query<<endl;
 
-            outfile <<query<<endl
-              <<headers
-              <<" VALUES ("
-              <<row.customer_ID<< ",'"
-              <<row.customer_Name<<"','"
-              <<row.customer_City<<"','"
-              <<row.customer_State<<"','"
-              <<row.customer_Country<<"','"
-              <<row.customer_Phone<<"','"
-              <<row.customer_Email<<"');"<<endl;
-
-               vector<rowType>values;
-               values.push_back(row);
-               customerTable.push_back(values);
+            vector<rowType>values;
+            values.push_back(row);
+            customerTable.push_back(values);
     }
 }
 
 void commandSelect (string& query, ofstream& outfile)
 {
-
-    //for(int i = 0; i < query.size();i++)
-   {
-        if (query.find ("SELECT")!= string::npos)
+    if (query.find ("SELECT")!= string::npos)
     {
         cout<<query<<endl;
         outfile<<query<<endl;
-
-   }
-
-
     }
-
 }
 
 void tableDisplay(ofstream& outfile)
- {
-
-
-     for (int i = 0; i < customerTable.size();i++)
-
+{
+    for (int i = 0; i < customerTable.size();i++)
     {
-
-
         for(int j = 0; j < customerTable[i].size();j++)
-    {
+        {
+            cout << customerTable[i][j].customer_ID<<","
+            << customerTable[i][j].customer_Name<<","
+            <<customerTable[i][j].customer_City<<","
+            <<customerTable[i][j].customer_State<<","
+            <<customerTable[i][j].customer_Country<<","
+            <<customerTable[i][j].customer_Phone<<","
+            <<customerTable[i][j].customer_Email<<endl;
 
-
-      cout << customerTable[i][j].customer_ID<<","
-           << customerTable[i][j].customer_Name<<","
-           <<customerTable[i][j].customer_City<<","
-           <<customerTable[i][j].customer_State<<","
-           <<customerTable[i][j].customer_Country<<","
-           <<customerTable[i][j].customer_Phone<<","
-           <<customerTable[i][j].customer_Email<<endl;
-
-   outfile << customerTable[i][j].customer_ID<<","
-           << customerTable[i][j].customer_Name<<","
-           <<customerTable[i][j].customer_City<<","
-           <<customerTable[i][j].customer_State<<","
-           <<customerTable[i][j].customer_Country<<","
-           <<customerTable[i][j].customer_Phone<<","
-           <<customerTable[i][j].customer_Email<<endl;
-
+            outfile << customerTable[i][j].customer_ID<<","
+            << customerTable[i][j].customer_Name<<","
+            <<customerTable[i][j].customer_City<<","
+            <<customerTable[i][j].customer_State<<","
+            <<customerTable[i][j].customer_Country<<","
+            <<customerTable[i][j].customer_Phone<<","
+            <<customerTable[i][j].customer_Email<<endl;
+            }
     }
-
-
-    }
-
- }
+}
