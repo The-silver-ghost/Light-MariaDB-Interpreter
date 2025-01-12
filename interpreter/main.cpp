@@ -87,7 +87,7 @@ int main() {
         }
         else if (commands.find("CREATE")!= string::npos) {
             string outPutName = OutPutFileToUse(commands);
-            outfile.open(outPutName, ios::app);
+            outfile.open(outPutName);
             commandCreateOutPutFile(commands, outfile);
         }
         else if (commands.find("INSERT INTO")!= string::npos) {
