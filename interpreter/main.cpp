@@ -54,9 +54,7 @@ int totalInserts = 0;
 
 
     vector<string> query = readFile();
-    for (string commands:query) {
-        cout << commands << endl;
-    }
+
 
    string outPutName = OutPutFileToUse(query);
    ofstream outfile;
@@ -78,24 +76,23 @@ int totalInserts = 0;
 
 vector <string> readFile() {
     vector<string> output;
-    string fileName,fileContents;
+    string fileContents;
+    string fileName[3] = {"fileInput1.mdb","fileInput2.mdb","fileInput3.mdb"};
 
-    cout << "Filename? (Case-sensitive,include extension)" << endl;
-    cout << ">";
-    cin >> fileName;
+    for (string name: fileName){
+        string fullFilePath = filePath+name;
+        inputFile.open(fullFilePath);
 
-    string fullFilePath = filePath+fileName;
-    inputFile.open(fullFilePath);
-
-    if (!inputFile) {
-        cout << "File not found in target directory" << endl;
-    }
-    else {
-        while (getline(inputFile,fileContents)) {
-            output.push_back(fileContents);
+        if (!inputFile) {
+            cout << "File not found in target directory" << endl;
         }
-        fullFilePath = filePath;
-        inputFile.close();
+        else {
+            while (getline(inputFile,fileContents)) {
+                output.push_back(fileContents);
+            }
+            fullFilePath = filePath;
+            inputFile.close();
+        }
     }
     return output;
 }
