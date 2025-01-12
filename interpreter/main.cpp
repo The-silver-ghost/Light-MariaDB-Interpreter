@@ -54,23 +54,59 @@ int totalInserts = 0;
 
 
     vector<string> query = readFile();
+    for (string commands : query){
+//create,delete,database,select,select count,update,table,create table,insert into
+        cout << commands << endl;
+        if (commands.find("CREATE TABLE") != string::npos){
+            cout << "CREATE TABLE" << endl;
+        }
+        else if (commands.find("DELETE")!=string::npos) {
+            cout << "delete" << endl;
+        }
+        else if (commands.find("DATABASE")!= string::npos) {
+            cout << "DATABASE" << endl;
+        }
+        else if (commands.find("SELECT")!= string::npos) {
+            cout << "SELECT" << endl;
+        }
+        else if (commands.find("SELECT COUNT")!= string::npos) {
+            cout << "SELECT COUNT" << endl;
+        }
+        else if (commands.find("UPDATE")!= string::npos) {
+            cout << "UPDATE" << endl;
+        }
+        else if (commands.find("TABLE")!= string::npos) {
+            cout << "TABLE" << endl;
+        }
+        else if (commands.find("CREATE")!= string::npos) {
+            cout << "CREATE" << endl;
+        }
+        else if (commands.find("INSERT INTO")!= string::npos) {
+            cout << "INSERT INTO" << endl;
+        }
+        else {
+            cout << "Invalid commands" << endl;
+        }
+
+    }
 
 
-   string outPutName = OutPutFileToUse(query);
+
+  /* string outPutName = OutPutFileToUse(query);
    ofstream outfile;
    outfile.open(outPutName, ios::app);
-
+    commandSelect(query, outfile);
 
 
    commandCreateOutPutFile(query, outfile);
-   commandCreateTable (query, outfile,tableName);
-   headers = tableHeaders(tableName);
-   commandInsertToTable (query, outfile, headers, totalInserts);
-   commandSelect (query, outfile);
-   tableDisplay(outfile);
+    headers = tableHeaders(tableName);
+    commandCreateTable(query, outfile,tableName);
+
+    commandInsertToTable(query, outfile, headers, totalInserts);
+    tableDisplay(outfile);
 
 
-   outfile.close();
+   outfile.close();*/
 
 }
 
@@ -87,7 +123,7 @@ vector <string> readFile() {
             cout << "File not found in target directory" << endl;
         }
         else {
-            while (getline(inputFile,fileContents)) {
+            while (getline(inputFile,fileContents,';')) {
                 output.push_back(fileContents);
             }
             fullFilePath = filePath;
