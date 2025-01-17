@@ -37,7 +37,7 @@ struct rowType
 
 string OutPutFileToUse(string query);
 void commandCreateOutPutFile(string& query, ofstream& outfile);
-void commandCreateTable(string& query, ofstream& outfile,string& tableName);
+vector<vector<string>> commandCreateTable(string& query, ofstream& outfile,string& tableName);
 void commandInsertToTable (string& query, ofstream& outfile,string& headers, int& totalInserts);
 void commandSelect (string& query, ofstream& outfile);
 string tableHeaders(string tableName);
@@ -47,7 +47,7 @@ void deleteTableRow(int);
 void countTableRows();
 string removeWhitespace(string);
 
-vector<vector<rowType>> customerTable;
+//vector<vector<rowType>> customerTable;
 
 
 int main() {
@@ -56,8 +56,7 @@ int main() {
     string headers;
     int totalInserts = 0;
     ofstream outfile;
-
-
+    vector<vector<string>> customerTable;
 
     vector<string> query = readFile();
     for (string commands : query){
@@ -68,7 +67,7 @@ int main() {
         }
         else if (commands.find("CREATE TABLE") != string::npos){
             headers = tableHeaders(tableName);
-            commandCreateTable(commands, outfile,tableName);
+            customerTable = commandCreateTable(commands, outfile,tableName);
         }
         else if (commands.find("DELETE")!=string::npos) {
             cout << "delete" << endl;
@@ -87,7 +86,7 @@ int main() {
             cout << "UPDATE" << endl;
         }
         else if (commands.find("TABLES")!= string::npos) {
-            cout << "TABLES"<< endl;
+            cout << tableName << endl;
         }
         else if (commands.find("CREATE")!= string::npos) {
             string outPutName = OutPutFileToUse(commands);
@@ -141,17 +140,33 @@ void commandCreateOutPutFile(string& query, ofstream& outfile)
     outfile << query<<endl;
 }
 
-void commandCreateTable(string& query, ofstream& outfile,  string& tableName)
+vector<vector<string>> commandCreateTable(string& query, ofstream& outfile,string& tableName)
 {
-        if (query.find ("CREATE TABLE")!= string::npos)
-        {
-            cout <<query<<endl;
-            outfile<<query<<endl;
-            tableName = query;
-            tableName.erase(0, 14);
-            tableName.erase(tableName.find('('), -1);
-            tableName = removeWhitespace(tableName);
+        vector<vector<string>> table;
+        vector<string> headers;
+        string tableColumnHeaders = query,tempStr;
+
+        cout << query << endl;
+        //acquire table name
+        tableName = query;
+        tableName.erase(0, 14);
+        tableName.erase(tableName.find('('), -1);
+        tableName = removeWhitespace(tableName);
+
+        //acquire table column headers
+        tableColumnHeaders = tableColumnHeaders.erase(0,14+tableName.size()+1);
+        for (int count = 1; count < tableColumnHeaders.size() - 1; count++){
+            if (tableColumnHeaders[count] != ','){
+                tempStr += tableColumnHeaders[count];
+            }
+            else{
+                headers.push_back(tempStr);
+                table.push_back(headers);
+                tempStr = "";
+                headers.clear();
+            }
         }
+        return table;
 }
 
 string tableHeaders(string tableName)
@@ -180,7 +195,7 @@ void commandInsertToTable (string& query, ofstream& outfile,string& headers, int
 
             vector<rowType>values;
             values.push_back(row);
-            customerTable.push_back(values);
+            //customerTable.push_back(values);
     }
 }
 
@@ -194,7 +209,7 @@ void commandSelect (string& query, ofstream& outfile)
 }
 
 void tableDisplay(ofstream& outfile)
-{
+{/*
     for (int i = 0; i < customerTable.size();i++)
     {
         for(int j = 0; j < customerTable[i].size();j++)
@@ -216,10 +231,10 @@ void tableDisplay(ofstream& outfile)
             <<customerTable[i][j].customer_Email<<endl;
             }
     }
-}
+*/}
 // to delete rows of the table
 void deleteTableRow(int customerID)
-{
+{/*
     bool found = false;
     for (auto it = customerTable.begin(); it != customerTable.end(); ++it)
     {
@@ -235,10 +250,10 @@ void deleteTableRow(int customerID)
     {
         cout << "Row with ID: " << customerID << " not found." << endl;
     }
-}
+*/}
 // view table content
 void viewTableContent()
-{
+{/*
     cout << "Table Content:" << endl;
     for (const auto &rowGroup : customerTable)
     {
@@ -250,9 +265,9 @@ void viewTableContent()
             << row.customer_Email << endl;
         }
     }
-}
+*/}
     // count the table rows
-    void countTableRows() {
+    void countTableRows() {/*
     int rowCount = 0;
 
     for (const auto& rowGroup : customerTable) {
@@ -261,7 +276,7 @@ void viewTableContent()
 
     // Output the row count
     cout << "Number of rows in the table: " << rowCount << endl;
-}
+*/}
 
 string removeWhitespace(string strWithSpaces){
     int stringSize = strWithSpaces.size();
