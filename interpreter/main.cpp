@@ -41,7 +41,7 @@ vector<vector<string>> commandCreateTable(string& query, ofstream& outfile,strin
 vector<vector<string>> commandInsertToTable (string& query, ofstream& outfile,vector<vector<string>> table,string tableName);
 void commandSelect (string& query, ofstream& outfile);
 string tableHeaders(string tableName);
-void tableDisplay(ofstream& outfile);
+void tableDisplay(ofstream& outfile,vector<vector<string>>);
 vector<string> readFile();
 void deleteTableRow(int);
 void countTableRows();
@@ -81,7 +81,7 @@ int main() {
         }
         else if (commands.find("SELECT")!= string::npos) {
             commandSelect(commands, outfile);
-            tableDisplay(outfile);
+            tableDisplay(outfile,customerTable);
         }
         else if (commands.find("UPDATE")!= string::npos) {
             cout << "UPDATE" << endl;
@@ -95,7 +95,7 @@ int main() {
             commandCreateOutPutFile(commands, outfile);
         }
         else if (commands.find("INSERT INTO")!= string::npos) {
-            commandInsertToTable(commands, outfile,customerTable,tableName);
+            customerTable = commandInsertToTable(commands, outfile,customerTable,tableName);
         }
         else {
            cout << "Invalid commands" << endl;
@@ -183,30 +183,15 @@ void commandSelect (string& query, ofstream& outfile)
     }
 }
 
-void tableDisplay(ofstream& outfile)
-{/*
-    for (int i = 0; i < customerTable.size();i++)
-    {
-        for(int j = 0; j < customerTable[i].size();j++)
-        {
-            cout << customerTable[i][j].customer_ID<<","
-            << customerTable[i][j].customer_Name<<","
-            <<customerTable[i][j].customer_City<<","
-            <<customerTable[i][j].customer_State<<","
-            <<customerTable[i][j].customer_Country<<","
-            <<customerTable[i][j].customer_Phone<<","
-            <<customerTable[i][j].customer_Email<<endl;
-
-            outfile << customerTable[i][j].customer_ID<<","
-            << customerTable[i][j].customer_Name<<","
-            <<customerTable[i][j].customer_City<<","
-            <<customerTable[i][j].customer_State<<","
-            <<customerTable[i][j].customer_Country<<","
-            <<customerTable[i][j].customer_Phone<<","
-            <<customerTable[i][j].customer_Email<<endl;
-            }
+void tableDisplay(ofstream& outfile,vector<vector<string>> table)
+{
+    for (int rows = 0; rows<table.size(); rows++){
+        cout << endl;;
+        for (int columns = 0; columns<table[rows].size(); columns++){
+            cout << table[rows][columns] << ",";
+        }
     }
-*/}
+}
 // to delete rows of the table
 void deleteTableRow(int customerID)
 {/*
@@ -275,10 +260,9 @@ vector<vector<string>> appendToVector(vector<vector<string>> table, string strTo
             }
             else{
                 row.push_back(tempStr);
-                table.push_back(row);
                 tempStr = "";
-                row.clear();
             }
     }
+    table.push_back(row);
     return table;
 }
