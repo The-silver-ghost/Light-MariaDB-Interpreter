@@ -167,7 +167,7 @@ void commandCreateTable(string& query, ofstream& outfile,  string& tableName)
             cout <<query<<endl;
             outfile<<query<<endl;
             tableName = query;
-            tableName.erase(0, 13);
+            tableName.erase(0, 14);
             tableName.erase(tableName.find('('), -1);
         }
 }
