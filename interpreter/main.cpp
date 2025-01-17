@@ -22,6 +22,7 @@
 using namespace std;
 
 ifstream inputFile;
+ofstream outfile;
 string filePath = "C:\\mariadb\\";
 
 struct rowType
@@ -36,10 +37,10 @@ struct rowType
 };
 
 string OutPutFileToUse(string query);
-void commandCreateOutPutFile(string& query, ofstream& outfile);
-vector<vector<string>> commandCreateTable(string& query, ofstream& outfile,string& tableName);
-vector<vector<string>> commandInsertToTable (string& query, ofstream& outfile,vector<vector<string>> table,string tableName);
-void commandSelect (string& query, ofstream& outfile);
+void commandCreateOutPutFile(string& query);
+vector<vector<string>> commandCreateTable(string& query,string& tableName);
+vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>> table,string tableName);
+void commandSelect (string& query);
 string tableHeaders(string tableName);
 void tableDisplay(ofstream& outfile,vector<vector<string>>);
 vector<string> readFile();
@@ -47,6 +48,7 @@ void deleteTableRow(int);
 void countTableRows();
 string removeWhitespace(string);
 vector<vector<string>> appendToVector(vector<vector<string>> table,string strToBeAppended);
+void displayCommands(string);
 
 //vector<vector<rowType>> customerTable;
 
@@ -56,7 +58,7 @@ int main() {
     string tableName;
     string headers;
     int totalInserts = 0;
-    ofstream outfile;
+
     vector<vector<string>> customerTable;
 
     vector<string> query = readFile();
@@ -68,7 +70,7 @@ int main() {
         }
         else if (commands.find("CREATE TABLE") != string::npos){
             headers = tableHeaders(tableName);
-            customerTable = commandCreateTable(commands, outfile,tableName);
+            customerTable = commandCreateTable(commands,tableName);
         }
         else if (commands.find("DELETE")!=string::npos) {
             cout << "delete" << endl;
@@ -80,22 +82,24 @@ int main() {
             cout << "SELECT COUNT" << endl;
         }
         else if (commands.find("SELECT")!= string::npos) {
-            commandSelect(commands, outfile);
+            commandSelect(commands);
             tableDisplay(outfile,customerTable);
         }
         else if (commands.find("UPDATE")!= string::npos) {
             cout << "UPDATE" << endl;
         }
         else if (commands.find("TABLES")!= string::npos) {
+            displayCommands(commands);
             cout << tableName << endl;
+            outfile << tableName << endl;
         }
         else if (commands.find("CREATE")!= string::npos) {
             string outPutName = OutPutFileToUse(commands);
             outfile.open(outPutName);
-            commandCreateOutPutFile(commands, outfile);
+            commandCreateOutPutFile(commands);
         }
         else if (commands.find("INSERT INTO")!= string::npos) {
-            customerTable = commandInsertToTable(commands, outfile,customerTable,tableName);
+            customerTable = commandInsertToTable(commands,customerTable,tableName);
         }
         else {
            cout << "Invalid commands" << endl;
@@ -135,19 +139,19 @@ string OutPutFileToUse(string query)
     return query;
 }
 
-void commandCreateOutPutFile(string& query, ofstream& outfile)
+void commandCreateOutPutFile(string& query)
 {
-    cout << query<<endl;
-    outfile << query<<endl;
+    cout << ">" << query << ";" << endl;
+    outfile << ">" << query << ";" << endl;
 }
 
-vector<vector<string>> commandCreateTable(string& query, ofstream& outfile,string& tableName)
+vector<vector<string>> commandCreateTable(string& query,string& tableName)
 {
         vector<vector<string>> table;
         vector<string> headers;
         string tableColumnHeaders = query,tempStr;
 
-        cout << query << endl;
+        displayCommands(query);
         //acquire table name
         tableName = query;
         tableName.erase(0, 14);
@@ -162,35 +166,34 @@ string tableHeaders(string tableName)
     string headers = tableName + "(customer_id,customer_name,customer_city,customer_state,customer_country,customer_phone,customer_email)";
     return headers;
 }
-vector<vector<string>> commandInsertToTable (string& query, ofstream& outfile,vector<vector<string>> table, string tableName)
+vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>> table, string tableName)
 {
     string values = query;
-    vector<string> column;
-    string tempstr;
 
+    displayCommands(query);
     values.erase(0,7+values.find("VALUES"));
 
     table = appendToVector(table,values);
     return table;
 }
 
-void commandSelect (string& query, ofstream& outfile)
+void commandSelect (string& query)
 {
-    if (query.find ("SELECT")!= string::npos)
-    {
-        cout<<query<<endl;
-        outfile<<query<<endl;
-    }
+    displayCommands(query);
 }
 
 void tableDisplay(ofstream& outfile,vector<vector<string>> table)
 {
     for (int rows = 0; rows<table.size(); rows++){
-        cout << endl;;
+        cout << endl;
+        outfile << endl;
         for (int columns = 0; columns<table[rows].size(); columns++){
             cout << table[rows][columns] << ",";
+            outfile << table[rows][columns] << ",";
         }
     }
+    cout << endl;
+    outfile << endl;
 }
 // to delete rows of the table
 void deleteTableRow(int customerID)
@@ -265,4 +268,9 @@ vector<vector<string>> appendToVector(vector<vector<string>> table, string strTo
     }
     table.push_back(row);
     return table;
+}
+
+void displayCommands(string cmd){
+    cout << ">" << cmd.erase(0,1) << ";" << endl;
+    outfile << ">" << cmd << ";" << endl;
 }
