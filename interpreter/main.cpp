@@ -38,7 +38,7 @@ struct rowType
 string OutPutFileToUse(string query);
 void commandCreateOutPutFile(string& query, ofstream& outfile);
 vector<vector<string>> commandCreateTable(string& query, ofstream& outfile,string& tableName);
-void commandInsertToTable (string& query, ofstream& outfile,string& headers, int& totalInserts);
+vector<vector<string>> commandInsertToTable (string& query, ofstream& outfile,vector<vector<string>> table,string tableName);
 void commandSelect (string& query, ofstream& outfile);
 string tableHeaders(string tableName);
 void tableDisplay(ofstream& outfile);
@@ -46,6 +46,7 @@ vector<string> readFile();
 void deleteTableRow(int);
 void countTableRows();
 string removeWhitespace(string);
+vector<vector<string>> appendToVector(vector<vector<string>> table,string strToBeAppended);
 
 //vector<vector<rowType>> customerTable;
 
@@ -94,7 +95,7 @@ int main() {
             commandCreateOutPutFile(commands, outfile);
         }
         else if (commands.find("INSERT INTO")!= string::npos) {
-            commandInsertToTable(commands, outfile, headers, totalInserts);
+            commandInsertToTable(commands, outfile,customerTable,tableName);
         }
         else {
            cout << "Invalid commands" << endl;
@@ -153,19 +154,6 @@ vector<vector<string>> commandCreateTable(string& query, ofstream& outfile,strin
         tableName.erase(tableName.find('('), -1);
         tableName = removeWhitespace(tableName);
 
-        //acquire table column headers
-        tableColumnHeaders = tableColumnHeaders.erase(0,14+tableName.size()+1);
-        for (int count = 1; count < tableColumnHeaders.size() - 1; count++){
-            if (tableColumnHeaders[count] != ','){
-                tempStr += tableColumnHeaders[count];
-            }
-            else{
-                headers.push_back(tempStr);
-                table.push_back(headers);
-                tempStr = "";
-                headers.clear();
-            }
-        }
         return table;
 }
 
@@ -174,29 +162,16 @@ string tableHeaders(string tableName)
     string headers = tableName + "(customer_id,customer_name,customer_city,customer_state,customer_country,customer_phone,customer_email)";
     return headers;
 }
-
-void commandInsertToTable (string& query, ofstream& outfile,string& headers, int& totalInserts)
+vector<vector<string>> commandInsertToTable (string& query, ofstream& outfile,vector<vector<string>> table, string tableName)
 {
-        if (query.find ("INSERT INTO")!= string::npos)
-        {
-            totalInserts++;
-            rowType row ;
+    string values = query;
+    vector<string> column;
+    string tempstr;
 
-            row.customer_ID = totalInserts;
-            row.customer_Name = "name" + to_string(totalInserts) ;
-            row.customer_City = "city" + to_string(totalInserts) ;
-            row.customer_State = "state" + to_string (totalInserts) ;
-            row.customer_Country = "country" + to_string(totalInserts) ;
-            row.customer_Phone = "phone" + to_string (totalInserts) ;
-            row.customer_Email = "email"+ to_string (totalInserts) ;
+    values.erase(0,7+values.find("VALUES"));
 
-            cout  <<query<<endl;
-            outfile <<query<<endl;
-
-            vector<rowType>values;
-            values.push_back(row);
-            //customerTable.push_back(values);
-    }
+    table = appendToVector(table,values);
+    return table;
 }
 
 void commandSelect (string& query, ofstream& outfile)
@@ -288,4 +263,22 @@ string removeWhitespace(string strWithSpaces){
         }
     }
     return newString;
+}
+
+vector<vector<string>> appendToVector(vector<vector<string>> table, string strToBeAppended){
+    string tempStr;
+    vector<string> row;
+
+    for (int count = 1; count < strToBeAppended.size() - 1; count++){
+            if (strToBeAppended[count] != ','){
+                tempStr += strToBeAppended[count];
+            }
+            else{
+                row.push_back(tempStr);
+                table.push_back(row);
+                tempStr = "";
+                row.clear();
+            }
+    }
+    return table;
 }
