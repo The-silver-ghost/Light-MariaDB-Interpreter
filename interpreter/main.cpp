@@ -41,7 +41,6 @@ void commandCreateOutPutFile(string& query);
 vector<vector<string>> commandCreateTable(string& query,string& tableName);
 vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>> table,string tableName);
 void commandSelect (string& query);
-string tableHeaders(string tableName);
 void tableDisplay(ofstream& outfile,vector<vector<string>>);
 vector<string> readFile();
 void deleteTableRow(int);
@@ -50,13 +49,9 @@ string removeWhitespace(string);
 vector<vector<string>> appendToVector(vector<vector<string>> table,string strToBeAppended);
 void displayCommands(string);
 
-//vector<vector<rowType>> customerTable;
-
-
 int main() {
 
     string tableName;
-    string headers;
     int totalInserts = 0;
 
     vector<vector<string>> customerTable;
@@ -69,7 +64,6 @@ int main() {
             outfile.close();
         }
         else if (commands.find("CREATE TABLE") != string::npos){
-            headers = tableHeaders(tableName);
             customerTable = commandCreateTable(commands,tableName);
         }
         else if (commands.find("DELETE")!=string::npos) {
@@ -161,11 +155,6 @@ vector<vector<string>> commandCreateTable(string& query,string& tableName)
         return table;
 }
 
-string tableHeaders(string tableName)
-{
-    string headers = tableName + "(customer_id,customer_name,customer_city,customer_state,customer_country,customer_phone,customer_email)";
-    return headers;
-}
 vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>> table, string tableName)
 {
     string values = query;
