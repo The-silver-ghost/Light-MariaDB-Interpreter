@@ -234,4 +234,44 @@ void tableDisplay(ofstream& outfile)
             <<customerTable[i][j].customer_Email<<endl;
             }
     }
+// to delete rows of the table
+void deleteTableRow(int customerID)
+    {
+    bool found = false;
+    for (auto it = customerTable.begin(); it != customerTable.end(); ++it) {
+        if (!it->empty() && it->front().customer_ID == customerID) {
+            customerTable.erase(it);
+            found = true;
+            cout << "Deleted row with ID: " << customerID << endl;
+            break;
+    }
+    }
+    if (!found) {
+        cout << "Row with ID: " << customerID << " not found." << endl;
+    }
+}
+// view table content
+void viewTableContent() {
+    cout << "Table Content:" << endl;
+    for (const auto &rowGroup : customerTable) {
+        for (const auto &row : rowGroup) {
+            cout << row.customer_ID << ", " << row.customer_Name << ", "
+                 << row.customer_City << ", " << row.customer_State << ", "
+                 << row.customer_Country << ", " << row.customer_Phone << ", "
+                 << row.customer_Email << endl;
+        }
+    }
+}
+    // count the table rows
+    void countTableRows() {
+    int rowCount = 0;
+
+    for (const auto& rowGroup : customerTable) {
+        rowCount += rowGroup.size(); // Add the size of each row group
+    }
+
+    // Output the row count
+    cout << "Number of rows in the table: " << rowCount << endl;
+}
+
 }
