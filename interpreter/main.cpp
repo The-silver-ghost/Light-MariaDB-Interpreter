@@ -35,7 +35,7 @@ struct rowType
     string customer_Email;
 };
 
-string OutPutFileToUse(string& query);
+string OutPutFileToUse(string query);
 void commandCreateOutPutFile(string& query, ofstream& outfile);
 void commandCreateTable(string& query, ofstream& outfile,string& tableName);
 void commandInsertToTable (string& query, ofstream& outfile,string& headers, int& totalInserts);
@@ -128,40 +128,17 @@ vector <string> readFile() {
     return output;
 }
 
-string OutPutFileToUse(string& query)
+string OutPutFileToUse(string query)
 {
-    if (query.find ("CREATE fileOutput1.txt")!= string::npos)
-    {
-        return "fileOutput1.txt";
-    }
-    else if (query.find ("CREATE fileOutput2.txt")!= string::npos)
-    {
-        return "fileOutput2.txt";
-    }
-    else if (query.find ("CREATE fileOutput3.txt")!= string::npos)
-    {
-        return "fileOutput3.txt";
-    }
-    return "";
+    query.erase(0,6);
+    query = removeWhitespace(query);
+    return query;
 }
 
 void commandCreateOutPutFile(string& query, ofstream& outfile)
 {
-    if (query.find ("CREATE fileOutput1.txt")!= string::npos)
-    {
-        cout << query<<endl;
-        outfile << query<<endl;
-    }
-    else if (query.find ("CREATE fileOutput2.txt")!= string::npos)
-    {
-        cout << query<<endl;
-        outfile << query<<endl;
-    }
-    else if (query.find ("CREATE fileOutput3.txt")!= string::npos)
-    {
-        cout << query<<endl;
-        outfile << query<<endl;
-    }
+    cout << query<<endl;
+    outfile << query<<endl;
 }
 
 void commandCreateTable(string& query, ofstream& outfile,  string& tableName)
@@ -293,10 +270,7 @@ string removeWhitespace(string strWithSpaces){
     for (int count = 0; count < stringSize; count ++){
         if (strWithSpaces[count] != ' '){
             newString += strWithSpaces[count];
-            cout << newString << endl;
         }
-        else
-            cout << "yes" << endl;
     }
     return newString;
 }
