@@ -43,6 +43,10 @@ void commandSelect (string& query, ofstream& outfile);
 string tableHeaders(string tableName);
 void tableDisplay(ofstream& outfile);
 vector<string> readFile();
+void deleteTableRow(int);
+void countTableRows();
+string removeWhitespace(string);
+
 vector<vector<rowType>> customerTable;
 
 
@@ -169,6 +173,7 @@ void commandCreateTable(string& query, ofstream& outfile,  string& tableName)
             tableName = query;
             tableName.erase(0, 14);
             tableName.erase(tableName.find('('), -1);
+            tableName = removeWhitespace(tableName);
         }
 }
 
@@ -234,31 +239,38 @@ void tableDisplay(ofstream& outfile)
             <<customerTable[i][j].customer_Email<<endl;
             }
     }
+}
 // to delete rows of the table
 void deleteTableRow(int customerID)
-    {
+{
     bool found = false;
-    for (auto it = customerTable.begin(); it != customerTable.end(); ++it) {
-        if (!it->empty() && it->front().customer_ID == customerID) {
+    for (auto it = customerTable.begin(); it != customerTable.end(); ++it)
+    {
+        if (!it->empty() && it->front().customer_ID == customerID)
+        {
             customerTable.erase(it);
             found = true;
             cout << "Deleted row with ID: " << customerID << endl;
             break;
+        }
     }
-    }
-    if (!found) {
+    if (!found)
+    {
         cout << "Row with ID: " << customerID << " not found." << endl;
     }
 }
 // view table content
-void viewTableContent() {
+void viewTableContent()
+{
     cout << "Table Content:" << endl;
-    for (const auto &rowGroup : customerTable) {
-        for (const auto &row : rowGroup) {
+    for (const auto &rowGroup : customerTable)
+    {
+        for (const auto &row : rowGroup)
+        {
             cout << row.customer_ID << ", " << row.customer_Name << ", "
-                 << row.customer_City << ", " << row.customer_State << ", "
-                 << row.customer_Country << ", " << row.customer_Phone << ", "
-                 << row.customer_Email << endl;
+            << row.customer_City << ", " << row.customer_State << ", "
+            << row.customer_Country << ", " << row.customer_Phone << ", "
+            << row.customer_Email << endl;
         }
     }
 }
@@ -274,4 +286,17 @@ void viewTableContent() {
     cout << "Number of rows in the table: " << rowCount << endl;
 }
 
+string removeWhitespace(string strWithSpaces){
+    int stringSize = strWithSpaces.size();
+    string newString;
+
+    for (int count = 0; count < stringSize; count ++){
+        if (strWithSpaces[count] != ' '){
+            newString += strWithSpaces[count];
+            cout << newString << endl;
+        }
+        else
+            cout << "yes" << endl;
+    }
+    return newString;
 }
