@@ -21,20 +21,12 @@
 #include <vector>
 using namespace std;
 
+//global vars
 ifstream inputFile;
 ofstream outfile;
+int totalInserts = 0;
 
-struct rowType
-{
-    int customer_ID;
-    string customer_Name;
-    string customer_City;
-    string customer_State;
-    string customer_Country;
-    string customer_Phone;
-    string customer_Email;
-};
-
+//functions
 string OutPutFileToUse(string query);
 void commandCreateOutPutFile(string& query);
 vector<vector<string>> commandCreateTable(string& query,string& tableName,vector<vector<string>> table);
@@ -43,16 +35,12 @@ void commandSelect (string& query);
 void tableDisplay(ofstream& outfile,vector<vector<string>>);
 vector<string> readFile();
 vector<vector<string>> deleteTableRow(string, vector<vector<string>>);
-void countTableRows();
 string removeWhitespace(string);
 vector<vector<string>> appendToVector(vector<vector<string>> table,string strToBeAppended);
 void displayCommands(string);
 
 int main() {
-
     string tableName;
-    int totalInserts = 0;
-
     vector<vector<string>> customerTable;
 
     vector<string> query = readFile();
@@ -72,7 +60,9 @@ int main() {
             cout << "DATABASE" << endl;
         }
         else if (commands.find("SELECT COUNT")!= string::npos) {
-            cout << "SELECT COUNT" << endl;
+            displayCommands(commands);
+            cout << totalInserts << endl;
+            outfile << totalInserts << endl;
         }
         else if (commands.find("SELECT")!= string::npos) {
             commandSelect(commands);
@@ -95,7 +85,7 @@ int main() {
             customerTable = commandInsertToTable(commands,customerTable,tableName);
         }
         else {
-           cout << "Invalid commands" << endl;
+           cout << "";
         }
     }
     return 0;
@@ -176,6 +166,7 @@ vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>
     values.erase(0,7+values.find("VALUES"));
 
     table = appendToVector(table,values);
+    totalInserts += 1;
     return table;
 }
 
@@ -207,21 +198,10 @@ vector<vector<string>> deleteTableRow(string query, vector<vector<string>> table
     rowToBeDeleted.erase(0,rowToBeDeleted.find("=")+1);
     row = stoi(rowToBeDeleted);
     table[row].clear();
+    totalInserts -= 1;
 
     return table;
 }
-
-    // count the table rows
-    void countTableRows() {/*
-    int rowCount = 0;
-
-    for (const auto& rowGroup : customerTable) {
-        rowCount += rowGroup.size(); // Add the size of each row group
-    }
-
-    // Output the row count
-    cout << "Number of rows in the table: " << rowCount << endl;
-*/}
 
 string removeWhitespace(string strWithSpaces){
     int stringSize = strWithSpaces.size();
