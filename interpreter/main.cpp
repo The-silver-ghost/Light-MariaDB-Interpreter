@@ -38,15 +38,18 @@ vector<vector<string>> deleteTableRow(string, vector<vector<string>>);
 string removeWhitespace(string);
 vector<vector<string>> appendToVector(vector<vector<string>> table,string strToBeAppended);
 void displayCommands(string,string);
+void displayDatabase(int,string);
 
 int main() {
     string tableName;
     vector<vector<string>> customerTable;
+    int fileNumber = 1;
 
     vector<string> query = readFile();
     for (string commands : query){
         if (commands.find("-1") != string::npos){
             totalInserts = 0;
+            fileNumber += 1;
             customerTable.clear();
             outfile.close();
         }
@@ -57,7 +60,7 @@ int main() {
             customerTable = deleteTableRow(commands,customerTable);
         }
         else if (commands.find("DATABASE")!= string::npos) {
-            cout << "DATABASE" << endl;
+            displayDatabase(fileNumber,commands);
         }
         else if (commands.find("SELECT COUNT")!= string::npos) {
             displayCommands(commands,"SELECT");
@@ -133,7 +136,7 @@ vector<vector<string>> commandCreateTable(string& query,string& tableName,vector
         vector<string> headers;
         string tableColumnHeaders = query,tempStr;
 
-        displayCommands(query,"CREATE");
+        displayCommands(query,"CREATE TABLE");
         //acquire table name
         tableName = query;
         tableName.erase(0, 14);
@@ -161,7 +164,7 @@ vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>
 {
     string values = query;
 
-    displayCommands(query,"INSERT");
+    displayCommands(query,"INSERT INTO");
     values.erase(0,7+values.find("VALUES"));
 
     table = appendToVector(table,values);
@@ -237,4 +240,21 @@ void displayCommands(string cmd,string beginningWord){
     cmd.erase(0,cmd.find(beginningWord));
     cout << ">" << cmd << ";" << endl;
     outfile << ">" << cmd << ";" << endl;
+}
+
+void displayDatabase(int fileNum,string cmd){
+    displayCommands(cmd,"DATABASES");
+
+    if (fileNum == 1){
+        cout << "C:\\mariadb\\fileInput1.mdb" << endl;
+        outfile << "C:\\mariadb\\fileInput1.mdb" << endl;
+    }
+    else if (fileNum == 2){
+        cout << "C:\\mariadb\\fileInput2.mdb" << endl;
+        outfile << "C:\\mariadb\\fileInput2.mdb" << endl;
+    }
+    else if (fileNum == 3){
+        cout << "C:\\mariadb\\fileInput3.mdb" << endl;
+        outfile << "C:\\mariadb\\fileInput3.mdb" << endl;
+    }
 }
