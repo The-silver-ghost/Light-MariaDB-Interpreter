@@ -21,39 +21,26 @@
 #include <vector>
 using namespace std;
 
+//global vars
 ifstream inputFile;
 ofstream outfile;
-string filePath = "C:\\mariadb\\";
+int totalInserts = 0;
 
-struct rowType
-{
-    int customer_ID;
-    string customer_Name;
-    string customer_City;
-    string customer_State;
-    string customer_Country;
-    string customer_Phone;
-    string customer_Email;
-};
-
+//functions
 string OutPutFileToUse(string query);
 void commandCreateOutPutFile(string& query);
-vector<vector<string>> commandCreateTable(string& query,string& tableName);
+vector<vector<string>> commandCreateTable(string& query,string& tableName,vector<vector<string>> table);
 vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>> table,string tableName);
 void commandSelect (string& query);
 void tableDisplay(ofstream& outfile,vector<vector<string>>);
 vector<string> readFile();
-void deleteTableRow(int);
-void countTableRows();
+vector<vector<string>> deleteTableRow(string, vector<vector<string>>);
 string removeWhitespace(string);
 vector<vector<string>> appendToVector(vector<vector<string>> table,string strToBeAppended);
 void displayCommands(string);
 
 int main() {
-
     string tableName;
-    int totalInserts = 0;
-
     vector<vector<string>> customerTable;
 
     vector<string> query = readFile();
@@ -64,16 +51,18 @@ int main() {
             outfile.close();
         }
         else if (commands.find("CREATE TABLE") != string::npos){
-            customerTable = commandCreateTable(commands,tableName);
+            customerTable = commandCreateTable(commands,tableName,customerTable);
         }
         else if (commands.find("DELETE")!=string::npos) {
-            cout << "delete" << endl;
+            customerTable = deleteTableRow(commands,customerTable);
         }
         else if (commands.find("DATABASE")!= string::npos) {
             cout << "DATABASE" << endl;
         }
         else if (commands.find("SELECT COUNT")!= string::npos) {
-            cout << "SELECT COUNT" << endl;
+            displayCommands(commands);
+            cout << totalInserts << endl;
+            outfile << totalInserts << endl;
         }
         else if (commands.find("SELECT")!= string::npos) {
             commandSelect(commands);
@@ -96,7 +85,7 @@ int main() {
             customerTable = commandInsertToTable(commands,customerTable,tableName);
         }
         else {
-           cout << "Invalid commands" << endl;
+           cout << "";
         }
     }
     return 0;
@@ -106,6 +95,7 @@ vector <string> readFile() {
     vector<string> output;
     string fileContents;
     string fileName[3] = {"fileInput1.mdb","fileInput2.mdb","fileInput3.mdb"};
+    string filePath = "C:\\mariadb\\";
 
     for (string name: fileName){
         string fullFilePath = filePath+name;
@@ -139,9 +129,8 @@ void commandCreateOutPutFile(string& query)
     outfile << ">" << query << ";" << endl;
 }
 
-vector<vector<string>> commandCreateTable(string& query,string& tableName)
+vector<vector<string>> commandCreateTable(string& query,string& tableName,vector<vector<string>> table)
 {
-        vector<vector<string>> table;
         vector<string> headers;
         string tableColumnHeaders = query,tempStr;
 
@@ -151,7 +140,21 @@ vector<vector<string>> commandCreateTable(string& query,string& tableName)
         tableName.erase(0, 14);
         tableName.erase(tableName.find('('), -1);
         tableName = removeWhitespace(tableName);
+        //acquire table Columns
+        tableColumnHeaders.erase(0,tableColumnHeaders.find("("));
 
+        //remove unnecessary info
+        for (int count = 0; count < tableColumnHeaders.size(); count++){
+            if (tableColumnHeaders.find(" ")!=string::npos)
+                tableColumnHeaders.erase(tableColumnHeaders.find(" "),1);
+            else if (tableColumnHeaders.find("INT")!=string::npos)
+                tableColumnHeaders.erase(tableColumnHeaders.find("INT"),3);
+            else if (tableColumnHeaders.find("TEXT")!=string::npos)
+                tableColumnHeaders.erase(tableColumnHeaders.find("TEXT"),4);
+            else if (tableColumnHeaders.find("\n")!=string::npos)
+                tableColumnHeaders.erase(tableColumnHeaders.find("\n"),1);
+        }
+        table = appendToVector(table, tableColumnHeaders);
         return table;
 }
 
@@ -163,6 +166,7 @@ vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>
     values.erase(0,7+values.find("VALUES"));
 
     table = appendToVector(table,values);
+    totalInserts += 1;
     return table;
 }
 
@@ -185,50 +189,19 @@ void tableDisplay(ofstream& outfile,vector<vector<string>> table)
     outfile << endl;
 }
 // to delete rows of the table
-void deleteTableRow(int customerID)
-{/*
-    bool found = false;
-    for (auto it = customerTable.begin(); it != customerTable.end(); ++it)
-    {
-        if (!it->empty() && it->front().customer_ID == customerID)
-        {
-            customerTable.erase(it);
-            found = true;
-            cout << "Deleted row with ID: " << customerID << endl;
-            break;
-        }
-    }
-    if (!found)
-    {
-        cout << "Row with ID: " << customerID << " not found." << endl;
-    }
-*/}
-// view table content
-void viewTableContent()
-{/*
-    cout << "Table Content:" << endl;
-    for (const auto &rowGroup : customerTable)
-    {
-        for (const auto &row : rowGroup)
-        {
-            cout << row.customer_ID << ", " << row.customer_Name << ", "
-            << row.customer_City << ", " << row.customer_State << ", "
-            << row.customer_Country << ", " << row.customer_Phone << ", "
-            << row.customer_Email << endl;
-        }
-    }
-*/}
-    // count the table rows
-    void countTableRows() {/*
-    int rowCount = 0;
+vector<vector<string>> deleteTableRow(string query, vector<vector<string>> table)
+{
+    displayCommands(query);
+    string rowToBeDeleted = query;
+    int row;
 
-    for (const auto& rowGroup : customerTable) {
-        rowCount += rowGroup.size(); // Add the size of each row group
-    }
+    rowToBeDeleted.erase(0,rowToBeDeleted.find("=")+1);
+    row = stoi(rowToBeDeleted);
+    table[row].clear();
+    totalInserts -= 1;
 
-    // Output the row count
-    cout << "Number of rows in the table: " << rowCount << endl;
-*/}
+    return table;
+}
 
 string removeWhitespace(string strWithSpaces){
     int stringSize = strWithSpaces.size();
@@ -260,6 +233,6 @@ vector<vector<string>> appendToVector(vector<vector<string>> table, string strTo
 }
 
 void displayCommands(string cmd){
-    cout << ">" << cmd.erase(0,1) << ";" << endl;
+    cout << ">" << cmd << ";" << endl;
     outfile << ">" << cmd << ";" << endl;
 }
