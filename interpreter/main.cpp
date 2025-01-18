@@ -37,7 +37,7 @@ struct rowType
 
 string OutPutFileToUse(string query);
 void commandCreateOutPutFile(string& query);
-vector<vector<string>> commandCreateTable(string& query,string& tableName);
+vector<vector<string>> commandCreateTable(string& query,string& tableName,vector<vector<string>> table);
 vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>> table,string tableName);
 void commandSelect (string& query);
 void tableDisplay(ofstream& outfile,vector<vector<string>>);
@@ -63,7 +63,7 @@ int main() {
             outfile.close();
         }
         else if (commands.find("CREATE TABLE") != string::npos){
-            customerTable = commandCreateTable(commands,tableName);
+            customerTable = commandCreateTable(commands,tableName,customerTable);
         }
         else if (commands.find("DELETE")!=string::npos) {
             customerTable = deleteTableRow(commands,customerTable);
@@ -139,9 +139,8 @@ void commandCreateOutPutFile(string& query)
     outfile << ">" << query << ";" << endl;
 }
 
-vector<vector<string>> commandCreateTable(string& query,string& tableName)
+vector<vector<string>> commandCreateTable(string& query,string& tableName,vector<vector<string>> table)
 {
-        vector<vector<string>> table;
         vector<string> headers;
         string tableColumnHeaders = query,tempStr;
 
@@ -151,7 +150,21 @@ vector<vector<string>> commandCreateTable(string& query,string& tableName)
         tableName.erase(0, 14);
         tableName.erase(tableName.find('('), -1);
         tableName = removeWhitespace(tableName);
+        //acquire table Columns
+        tableColumnHeaders.erase(0,tableColumnHeaders.find("("));
 
+        //remove unnecessary info
+        for (int count = 0; count < tableColumnHeaders.size(); count++){
+            if (tableColumnHeaders.find(" ")!=string::npos)
+                tableColumnHeaders.erase(tableColumnHeaders.find(" "),1);
+            else if (tableColumnHeaders.find("INT")!=string::npos)
+                tableColumnHeaders.erase(tableColumnHeaders.find("INT"),3);
+            else if (tableColumnHeaders.find("TEXT")!=string::npos)
+                tableColumnHeaders.erase(tableColumnHeaders.find("TEXT"),4);
+            else if (tableColumnHeaders.find("\n")!=string::npos)
+                tableColumnHeaders.erase(tableColumnHeaders.find("\n"),1);
+        }
+        table = appendToVector(table, tableColumnHeaders);
         return table;
 }
 
@@ -193,7 +206,7 @@ vector<vector<string>> deleteTableRow(string query, vector<vector<string>> table
 
     rowToBeDeleted.erase(0,rowToBeDeleted.find("=")+1);
     row = stoi(rowToBeDeleted);
-    table[row-1].clear();
+    table[row].clear();
 
     return table;
 }
