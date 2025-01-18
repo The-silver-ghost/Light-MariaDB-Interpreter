@@ -23,7 +23,6 @@ using namespace std;
 
 ifstream inputFile;
 ofstream outfile;
-string filePath = "C:\\mariadb\\";
 
 struct rowType
 {
@@ -43,7 +42,7 @@ vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>
 void commandSelect (string& query);
 void tableDisplay(ofstream& outfile,vector<vector<string>>);
 vector<string> readFile();
-void deleteTableRow(int);
+vector<vector<string>> deleteTableRow(string, vector<vector<string>>);
 void countTableRows();
 string removeWhitespace(string);
 vector<vector<string>> appendToVector(vector<vector<string>> table,string strToBeAppended);
@@ -67,7 +66,7 @@ int main() {
             customerTable = commandCreateTable(commands,tableName);
         }
         else if (commands.find("DELETE")!=string::npos) {
-            cout << "delete" << endl;
+            customerTable = deleteTableRow(commands,customerTable);
         }
         else if (commands.find("DATABASE")!= string::npos) {
             cout << "DATABASE" << endl;
@@ -106,6 +105,7 @@ vector <string> readFile() {
     vector<string> output;
     string fileContents;
     string fileName[3] = {"fileInput1.mdb","fileInput2.mdb","fileInput3.mdb"};
+    string filePath = "C:\\mariadb\\";
 
     for (string name: fileName){
         string fullFilePath = filePath+name;
@@ -185,39 +185,19 @@ void tableDisplay(ofstream& outfile,vector<vector<string>> table)
     outfile << endl;
 }
 // to delete rows of the table
-void deleteTableRow(int customerID)
-{/*
-    bool found = false;
-    for (auto it = customerTable.begin(); it != customerTable.end(); ++it)
-    {
-        if (!it->empty() && it->front().customer_ID == customerID)
-        {
-            customerTable.erase(it);
-            found = true;
-            cout << "Deleted row with ID: " << customerID << endl;
-            break;
-        }
-    }
-    if (!found)
-    {
-        cout << "Row with ID: " << customerID << " not found." << endl;
-    }
-*/}
-// view table content
-void viewTableContent()
-{/*
-    cout << "Table Content:" << endl;
-    for (const auto &rowGroup : customerTable)
-    {
-        for (const auto &row : rowGroup)
-        {
-            cout << row.customer_ID << ", " << row.customer_Name << ", "
-            << row.customer_City << ", " << row.customer_State << ", "
-            << row.customer_Country << ", " << row.customer_Phone << ", "
-            << row.customer_Email << endl;
-        }
-    }
-*/}
+vector<vector<string>> deleteTableRow(string query, vector<vector<string>> table)
+{
+    displayCommands(query);
+    string rowToBeDeleted = query;
+    int row;
+
+    rowToBeDeleted.erase(0,rowToBeDeleted.find("=")+1);
+    row = stoi(rowToBeDeleted);
+    table[row-1].clear();
+
+    return table;
+}
+
     // count the table rows
     void countTableRows() {/*
     int rowCount = 0;
@@ -260,6 +240,6 @@ vector<vector<string>> appendToVector(vector<vector<string>> table, string strTo
 }
 
 void displayCommands(string cmd){
-    cout << ">" << cmd.erase(0,1) << ";" << endl;
+    cout << ">" << cmd << ";" << endl;
     outfile << ">" << cmd << ";" << endl;
 }
