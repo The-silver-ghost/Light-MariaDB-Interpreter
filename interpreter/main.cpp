@@ -283,8 +283,8 @@ vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
     displayCommands(cmd,"UPDATE");
 
     //get item to replace
-    itemToReplace.erase(0,itemToReplace.find("'")+1);
-    itemToReplace.erase(itemToReplace.find("'"),-1);
+    itemToReplace.erase(0,itemToReplace.find("=")+1);
+    itemToReplace.erase(itemToReplace.find("' ")+1,-1);
 
     //get row
     row.erase(0,row.find("=")+1);
