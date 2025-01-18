@@ -115,7 +115,7 @@ vector <string> readFile() {
             fullFilePath = filePath;
             inputFile.close();
         }
-        output.push_back("-1");
+        output.push_back("-1"); //to indicate end of file
     }
     return output;
 }
