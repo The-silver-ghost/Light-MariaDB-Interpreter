@@ -192,8 +192,15 @@ void tableDisplay(ofstream& outfile,vector<vector<string>> table)
             outfile << endl;
         }
         for (int columns = 0; columns<table[rows].size(); columns++){
-            cout << table[rows][columns] << ",";
-            outfile << table[rows][columns] << ",";
+            if (columns != table[rows].size()-1){
+                cout << table[rows][columns] << ",";
+                outfile << table[rows][columns] << ",";
+            }
+            else{
+                cout << table[rows][columns];
+                outfile << table[rows][columns];
+            }
+
         }
     }
     cout << endl;
