@@ -37,7 +37,7 @@ vector<string> readFile();
 vector<vector<string>> deleteTableRow(string, vector<vector<string>>);
 string removeWhitespace(string);
 vector<vector<string>> appendToVector(vector<vector<string>> table,string strToBeAppended);
-void displayCommands(string);
+void displayCommands(string,string);
 
 int main() {
     string tableName;
@@ -60,7 +60,7 @@ int main() {
             cout << "DATABASE" << endl;
         }
         else if (commands.find("SELECT COUNT")!= string::npos) {
-            displayCommands(commands);
+            displayCommands(commands,"SELECT");
             cout << totalInserts << endl;
             outfile << totalInserts << endl;
         }
@@ -72,7 +72,7 @@ int main() {
             cout << "UPDATE" << endl;
         }
         else if (commands.find("TABLES")!= string::npos) {
-            displayCommands(commands);
+            displayCommands(commands,"TABLES");
             cout << tableName << endl;
             outfile << tableName << endl;
         }
@@ -125,8 +125,7 @@ string OutPutFileToUse(string query)
 
 void commandCreateOutPutFile(string& query)
 {
-    cout << ">" << query << ";" << endl;
-    outfile << ">" << query << ";" << endl;
+    displayCommands(query,"CREATE");
 }
 
 vector<vector<string>> commandCreateTable(string& query,string& tableName,vector<vector<string>> table)
@@ -134,7 +133,7 @@ vector<vector<string>> commandCreateTable(string& query,string& tableName,vector
         vector<string> headers;
         string tableColumnHeaders = query,tempStr;
 
-        displayCommands(query);
+        displayCommands(query,"CREATE");
         //acquire table name
         tableName = query;
         tableName.erase(0, 14);
@@ -162,7 +161,7 @@ vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>
 {
     string values = query;
 
-    displayCommands(query);
+    displayCommands(query,"INSERT");
     values.erase(0,7+values.find("VALUES"));
 
     table = appendToVector(table,values);
@@ -172,14 +171,16 @@ vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>
 
 void commandSelect (string& query)
 {
-    displayCommands(query);
+    displayCommands(query,"SELECT");
 }
 
 void tableDisplay(ofstream& outfile,vector<vector<string>> table)
 {
     for (int rows = 0; rows<table.size(); rows++){
-        cout << endl;
-        outfile << endl;
+        if (rows > 0){
+            cout << endl;
+            outfile << endl;
+        }
         for (int columns = 0; columns<table[rows].size(); columns++){
             cout << table[rows][columns] << ",";
             outfile << table[rows][columns] << ",";
@@ -191,7 +192,7 @@ void tableDisplay(ofstream& outfile,vector<vector<string>> table)
 // to delete rows of the table
 vector<vector<string>> deleteTableRow(string query, vector<vector<string>> table)
 {
-    displayCommands(query);
+    displayCommands(query,"DELETE");
     string rowToBeDeleted = query;
     int row;
 
@@ -232,7 +233,8 @@ vector<vector<string>> appendToVector(vector<vector<string>> table, string strTo
     return table;
 }
 
-void displayCommands(string cmd){
+void displayCommands(string cmd,string beginningWord){
+    cmd.erase(0,cmd.find(beginningWord));
     cout << ">" << cmd << ";" << endl;
     outfile << ">" << cmd << ";" << endl;
 }
