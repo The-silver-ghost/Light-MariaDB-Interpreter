@@ -157,6 +157,9 @@ vector<vector<string>> commandCreateTable(string& query,string& tableName,vector
             else if (tableColumnHeaders.find("\n")!=string::npos)
                 tableColumnHeaders.erase(tableColumnHeaders.find("\n"),1);
         }
+        tableColumnHeaders.erase(0,1);
+        tableColumnHeaders.erase(tableColumnHeaders.find(")"),1);
+        tableColumnHeaders += ",";
         table = appendToVector(table, tableColumnHeaders);
         return table;
 }
@@ -167,6 +170,9 @@ vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>
 
     displayCommands(query,"INSERT INTO");
     values.erase(0,7+values.find("VALUES"));
+    values.erase(0,1);
+    values.erase(values.find(")"),1);
+    values += ",";
 
     table = appendToVector(table,values);
     totalInserts += 1;
@@ -224,7 +230,7 @@ vector<vector<string>> appendToVector(vector<vector<string>> table, string strTo
     string tempStr;
     vector<string> row;
 
-    for (int count = 1; count < strToBeAppended.size() - 1; count++){
+    for (int count = 0; count < strToBeAppended.size(); count++){
             if (strToBeAppended[count] != ','){
                 tempStr += strToBeAppended[count];
             }
