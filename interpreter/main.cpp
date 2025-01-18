@@ -39,6 +39,7 @@ string removeWhitespace(string);
 vector<vector<string>> appendToVector(vector<vector<string>> table,string strToBeAppended);
 void displayCommands(string,string);
 void displayDatabase(int,string);
+vector<vector<string>> updateTable(string,vector<vector<string>>);
 
 int main() {
     string tableName;
@@ -72,7 +73,7 @@ int main() {
             tableDisplay(outfile,customerTable);
         }
         else if (commands.find("UPDATE")!= string::npos) {
-            cout << "UPDATE" << endl;
+            customerTable = updateTable(commands,customerTable);
         }
         else if (commands.find("TABLES")!= string::npos) {
             displayCommands(commands,"TABLES");
@@ -156,6 +157,9 @@ vector<vector<string>> commandCreateTable(string& query,string& tableName,vector
             else if (tableColumnHeaders.find("\n")!=string::npos)
                 tableColumnHeaders.erase(tableColumnHeaders.find("\n"),1);
         }
+        tableColumnHeaders.erase(0,1);
+        tableColumnHeaders.erase(tableColumnHeaders.find(")"),1);
+        tableColumnHeaders += ",";
         table = appendToVector(table, tableColumnHeaders);
         return table;
 }
@@ -166,6 +170,9 @@ vector<vector<string>> commandInsertToTable (string& query,vector<vector<string>
 
     displayCommands(query,"INSERT INTO");
     values.erase(0,7+values.find("VALUES"));
+    values.erase(0,1);
+    values.erase(values.find(")"),1);
+    values += ",";
 
     table = appendToVector(table,values);
     totalInserts += 1;
@@ -223,7 +230,7 @@ vector<vector<string>> appendToVector(vector<vector<string>> table, string strTo
     string tempStr;
     vector<string> row;
 
-    for (int count = 1; count < strToBeAppended.size() - 1; count++){
+    for (int count = 0; count < strToBeAppended.size(); count++){
             if (strToBeAppended[count] != ','){
                 tempStr += strToBeAppended[count];
             }
@@ -257,4 +264,38 @@ void displayDatabase(int fileNum,string cmd){
         cout << "C:\\mariadb\\fileInput3.mdb" << endl;
         outfile << "C:\\mariadb\\fileInput3.mdb" << endl;
     }
+}
+
+vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
+    string itemToReplace = cmd;
+    string row = cmd;
+    string columnName = cmd;
+    int colNum;
+    int rowNum;
+
+    displayCommands(cmd,"UPDATE");
+
+    //get item to replace
+    itemToReplace.erase(0,itemToReplace.find("'")+1);
+    itemToReplace.erase(itemToReplace.find("'"),-1);
+
+    //get row
+    row.erase(0,row.find("=")+1);
+    row.erase(0,row.find("=")+1);
+    rowNum = stoi(row);
+
+    //get column name
+    columnName.erase(0,columnName.find("SET")+4);
+    columnName.erase(columnName.find("="),-1);
+
+    for (int vectorRow = 0; vectorRow<table.size();vectorRow++){
+        for (int col = 0; col < table[vectorRow].size();col++){
+            if (table[vectorRow][col] == columnName){
+                colNum = col;
+                break;
+            }
+        }
+    }
+    table[rowNum][colNum] = itemToReplace;
+    return table;
 }
