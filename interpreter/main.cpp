@@ -210,14 +210,26 @@ void tableDisplay(ofstream& outfile,vector<vector<string>> table)
 vector<vector<string>> deleteTableRow(string query, vector<vector<string>> table)
 {
     displayCommands(query,"DELETE");
+    bool foundRow = false;
     string rowToBeDeleted = query;
     int row;
 
     rowToBeDeleted.erase(0,rowToBeDeleted.find("=")+1);
     row = stoi(rowToBeDeleted);
-    table[row].clear();
-    totalInserts -= 1;
 
+    for (int i=0;i<table.size();i++){
+        for (int j=0;j<table[i].size();j++){
+            if (table[i][j] == rowToBeDeleted)
+                foundRow = true;
+        }
+    }
+    if (foundRow){
+        table[row].clear();
+        totalInserts -= 1;
+    }
+    else{
+        cout << "ERROR: Unable to find specified ID of " << row << endl;
+    }
     return table;
 }
 
@@ -279,6 +291,7 @@ vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
     string columnName = cmd;
     int colNum;
     int rowNum;
+    bool foundCol = false, foundRow = false;
 
     displayCommands(cmd,"UPDATE");
 
@@ -299,10 +312,24 @@ vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
         for (int col = 0; col < table[vectorRow].size();col++){
             if (table[vectorRow][col] == columnName){
                 colNum = col;
-                break;
+                foundCol = true;
+                //break;
             }
+            else if (table[vectorRow][col] == row)
+                foundRow = true;
         }
     }
-    table[rowNum][colNum] = itemToReplace;
-    return table;
+    if (!foundRow){
+        cout << "ERROR: Unable to find customer ID of " << row << endl;
+        return table;
+    }
+
+    if (foundCol){
+        table[rowNum][colNum] = itemToReplace;
+        return table;
+    }
+    else {
+        cout << "ERROR: Unable to find specified column name of " << columnName << endl;
+        return table;
+    }
 }
