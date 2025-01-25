@@ -215,11 +215,11 @@ vector<vector<string>> deleteTableRow(string query, vector<vector<string>> table
     int row;
 
     rowToBeDeleted.erase(0,rowToBeDeleted.find("=")+1);
-    row = stoi(rowToBeDeleted);
 
     for (int i=0;i<table.size();i++){
         for (int j=0;j<table[i].size();j++){
             if (table[i][j] == rowToBeDeleted)
+                row = i;
                 foundRow = true;
         }
     }
@@ -297,12 +297,11 @@ vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
 
     //get item to replace
     itemToReplace.erase(0,itemToReplace.find("=")+1);
-    itemToReplace.erase(itemToReplace.find("' ")+1,-1);
+    itemToReplace.erase(itemToReplace.find(" "),-1);
 
     //get row
     row.erase(0,row.find("=")+1);
     row.erase(0,row.find("=")+1);
-    rowNum = stoi(row);
 
     //get column name
     columnName.erase(0,columnName.find("SET")+4);
@@ -313,10 +312,11 @@ vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
             if (table[vectorRow][col] == columnName){
                 colNum = col;
                 foundCol = true;
-                //break;
             }
-            else if (table[vectorRow][col] == row)
-                foundRow = true;
+            else if (table[vectorRow][col] == row){
+             rowNum = vectorRow;
+             foundRow = true;
+            }
         }
     }
     if (!foundRow){
