@@ -313,7 +313,7 @@ vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
                 colNum = col;
                 foundCol = true;
             }
-            else if (table[vectorRow][col] == row){
+            if (table[vectorRow][col] == row){
              rowNum = vectorRow;
              foundRow = true;
             }
