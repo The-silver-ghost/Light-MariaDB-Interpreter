@@ -107,6 +107,7 @@ vector <string> readFile() {
 
         if (!inputFile) {
             cout << "File not found in target directory" << endl;
+            outfile << "File not found in target directory" << endl;
         }
         else {
             while (getline(inputFile,fileContents,';')) {
