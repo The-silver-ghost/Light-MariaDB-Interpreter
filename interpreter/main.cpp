@@ -297,7 +297,7 @@ vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
 
     //get item to replace
     itemToReplace.erase(0,itemToReplace.find("=")+1);
-    itemToReplace.erase(itemToReplace.find(" "),-1);
+    itemToReplace.erase(itemToReplace.find("WHERE")-1,-1);
 
     //get row
     row.erase(0,row.find("=")+1);
@@ -321,6 +321,7 @@ vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
     }
     if (!foundRow){
         cout << "ERROR: Unable to find customer ID of " << row << endl;
+        outfile << "ERROR: Unable to find customer ID of " << row << endl;
         return table;
     }
 
@@ -330,6 +331,7 @@ vector<vector<string>> updateTable(string cmd,vector<vector<string>> table){
     }
     else {
         cout << "ERROR: Unable to find specified column name of " << columnName << endl;
+        outfile << "ERROR: Unable to find specified column name of " << columnName << endl;
         return table;
     }
 }
